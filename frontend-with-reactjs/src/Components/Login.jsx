@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import { loginSchema } from "./schema";
 import { FiAlertCircle } from "react-icons/fi";
 import { useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const initialValues = {
   email: "",
@@ -17,13 +19,22 @@ const Login = () => {
       initialValues: initialValues,
       validationSchema: loginSchema,
       onSubmit: (values, action) => {
-        console.log(values);
+        if (!isError) toast.success("Thank you for login!");
+
         action.resetForm();
       },
     });
 
   let [passwordShow, setPassword] = useState(false);
-  let { isLoading } = useSelector((store) => store.loginReducer);
+  let { isLoading, isError, errorMessage } = useSelector(
+    (store) => store.loginReducer
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.warn("something went wrong");
+    }
+  }, [isError]);
 
   return (
     <div>
@@ -43,12 +54,10 @@ const Login = () => {
           onChange={handleChange}
         />
 
-        {errors.email && touched.email ? (
+        {errors.email && touched.email && (
           <p>
             <FiAlertCircle className={"icon"} /> {errors.email}
           </p>
-        ) : (
-          ""
         )}
 
         <Label htmlFor="password">Password</Label>
@@ -77,13 +86,14 @@ const Login = () => {
           </div>
         )}
 
-        <div className="submitButton">
-          {true ? <span className="Loader"></span> : ""}
-          <Button type="submit">Log In</Button>
-        </div>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Please wait ..." : "Log In"}
+        </Button>
 
         <Link to={"/signup"}>Create an account</Link>
       </Form>
+
+      <ToastContainer />
     </div>
   );
 };
@@ -164,33 +174,6 @@ const Form = styled.form`
       margin-right: 5px;
       width: 1rem;
       height: 1rem;
-    }
-  }
-
-  .submitButton {
-    background-color: transparent;
-    position: relative;
-
-    .Loader {
-      position: absolute;
-      width: 2rem;
-      height: 2rem;
-      bottom: 1.2rem;
-      left: 4rem;
-      border-radius: 100%;
-      background-color: transparent;
-      border: 3px solid white;
-      border-left-color: #f09819;
-      animation: spinner ease-in-out infinite;
-    }
-  }
-
-  @keyframes spinner {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
     }
   }
 `;

@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { signupSchema } from "./schema";
 import { FiAlertCircle } from "react-icons/fi";
+import { useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const initialValues = {
   name: "",
@@ -13,15 +16,29 @@ const initialValues = {
 };
 
 const Signup = () => {
+  let navigate = useNavigate();
   let { values, errors, handleBlur, handleChange, handleSubmit, touched } =
     useFormik({
       initialValues: initialValues,
       validationSchema: signupSchema,
       onSubmit: (values, action) => {
-        console.log(values);
+        if (!isError) toast.success("Thank you for signup!");
+        setTimeout(() => {
+          if (!isError) navigate("/login");
+        }, 2000);
         action.resetForm();
       },
     });
+
+  let { isLoading, isError, errorMessage } = useSelector(
+    (store) => store.signupReducer
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.warn("something went wrong");
+    }
+  }, [isError]);
 
   return (
     <div>
@@ -42,12 +59,10 @@ const Signup = () => {
           value={values.name}
         />
 
-        {errors.name && touched.name ? (
+        {errors.name && touched.name && (
           <p>
             <FiAlertCircle className={"icon"} /> {errors.name}
           </p>
-        ) : (
-          ""
         )}
 
         <Label htmlFor="email">Email</Label>
@@ -60,13 +75,11 @@ const Signup = () => {
           value={values.email}
         />
 
-        {errors.email && touched.email ? (
+        {errors.email && touched.email && (
           <p>
             <FiAlertCircle className={"icon"} />
             {errors.email}
           </p>
-        ) : (
-          ""
         )}
 
         <Label htmlFor="password1">Password</Label>
@@ -79,13 +92,11 @@ const Signup = () => {
           value={values.password1}
         />
 
-        {errors.password1 && touched.password1 ? (
+        {errors.password1 && touched.password1 && (
           <p>
             <FiAlertCircle className={"icon"} />
             {errors.password1}
           </p>
-        ) : (
-          ""
         )}
 
         <Label htmlFor="password2">Confirm Password</Label>
@@ -98,19 +109,21 @@ const Signup = () => {
           value={values.password2}
         />
 
-        {errors.password2 && touched.password2 ? (
+        {errors.password2 && touched.password2 && (
           <p>
             <FiAlertCircle className={"icon"} />
             {errors.password2}
           </p>
-        ) : (
-          ""
         )}
 
-        <Button type="submit">Signup</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Please wait ..." : "Signup"}
+        </Button>
 
         <Link to={"/login"}>I already have an account</Link>
       </Form>
+
+      <ToastContainer />
     </div>
   );
 };
