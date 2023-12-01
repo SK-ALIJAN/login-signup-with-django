@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { loginSchema } from "./schema";
 import { FiAlertCircle } from "react-icons/fi";
-import { useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { LoginToServer } from "../Redux/action";
 
 const initialValues = {
   email: "",
@@ -14,27 +15,44 @@ const initialValues = {
 };
 
 const Login = () => {
+  let [passwordShow, setPassword] = useState(false);
+  let dispatch = useDispatch();
+  let navigate = useNavigate();
+  let { isLoading, isError, errorMessage, signupdata } = useSelector(
+    (store) => {
+      return {
+        isLoading: store.loginReducer.isLoading,
+        isError: store.loginReducer.isError,
+        errorMessage: store.loginReducer.errorMessage,
+        signupdata: store.signupReducer.data,
+      };
+    },
+    shallowEqual
+  );
+
   let { values, errors, handleBlur, handleChange, handleSubmit, touched } =
     useFormik({
       initialValues: initialValues,
       validationSchema: loginSchema,
       onSubmit: (values, action) => {
-        if (!isError) toast.success("Thank you for login!");
+        if (
+          signupdata.email === values.email &&
+          signupdata.password1 === values.password
+        ) {
+          dispatch(LoginToServer(values));
+          if (!isError) {
+            toast.success("Thank you for login!");
+            setTimeout(() => {
+              navigate("/");
+            }, 3000);
+          }
+        } else {
+          toast.warn("please check credentials!");
+        }
 
         action.resetForm();
       },
     });
-
-  let [passwordShow, setPassword] = useState(false);
-  let { isLoading, isError, errorMessage } = useSelector(
-    (store) => store.loginReducer
-  );
-
-  useEffect(() => {
-    if (isError) {
-      toast.warn("something went wrong");
-    }
-  }, [isError]);
 
   return (
     <div>
@@ -213,6 +231,8 @@ const Input = styled.input`
 
   &:focus {
     border: 2px solid white;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+      rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
   }
 `;
 
@@ -228,4 +248,9 @@ const Button = styled.button`
   cursor: pointer;
   border: 0;
   margin-bottom: 10px;
+  transition: ease-in-out;
+
+  &:active {
+    transform: scale(1.1);
+  }
 `;

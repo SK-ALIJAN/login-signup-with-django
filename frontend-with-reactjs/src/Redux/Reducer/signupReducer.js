@@ -2,7 +2,7 @@ import { SIGNUP_ERROR, SIGNUP_REQUEST, SIGNUP_SUCCESS } from "../actionType";
 
 let InitialState = {
   isLoading: false,
-  data: {},
+  data: JSON.parse(localStorage.getItem("signupdata")) || {},
   isError: false,
   errorMessage: "",
 };
@@ -13,6 +13,7 @@ const signupReducer = (state = InitialState, { type, payload }) => {
       return { ...state, isLoading: true };
 
     case SIGNUP_SUCCESS:
+      localStorage.setItem("signupdata", JSON.stringify(payload));
       return {
         ...state,
         isLoading: false,

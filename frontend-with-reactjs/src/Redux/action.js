@@ -14,8 +14,8 @@ export const SignupToServer = (newUser) => async (dispatch) => {
 
   try {
     dispatch({ type: SIGNUP_REQUEST });
-    let data = await axios.post(url, newUser);
-    dispatch({ type: SIGNUP_SUCCESS, payload: data });
+    // let data = await axios.post(url, newUser);
+    dispatch({ type: SIGNUP_SUCCESS, payload: newUser });
   } catch (error) {
     dispatch({ type: SIGNUP_ERROR, payload: error });
   }
@@ -26,8 +26,8 @@ export const LoginToServer = (User) => async (dispatch) => {
 
   try {
     dispatch({ type: LOGIN_REQUEST });
-    let data = await axios.post(url, User);
-    dispatch({ type: LOGIN_SUCCESS, payload: data });
+    // let data = await axios.post(url, User);
+    dispatch({ type: LOGIN_SUCCESS, payload: User });
   } catch (error) {
     dispatch({ type: LOGIN_ERROR, payload: error });
   }

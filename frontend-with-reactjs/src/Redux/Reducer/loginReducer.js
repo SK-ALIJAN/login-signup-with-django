@@ -1,8 +1,13 @@
-import { LOGIN_ERROR, LOGIN_REQUEST, LOGIN_SUCCESS } from "../actionType";
+import {
+  LOGIN_ERROR,
+  LOGIN_REQUEST,
+  LOGIN_SUCCESS,
+  LOGOUT,
+} from "../actionType";
 
 let InitialState = {
   isLoading: false,
-  isAuth: false,
+  isAuth: localStorage.getItem("isAuth") ?? false,
   data: {},
   isError: false,
   errorMessage: "",
@@ -14,6 +19,7 @@ const LoginReducer = (state = InitialState, { type, payload }) => {
       return { ...state, isLoading: true };
 
     case LOGIN_SUCCESS:
+      localStorage.setItem("isAuth", true);
       return {
         ...state,
         isLoading: false,
@@ -31,6 +37,13 @@ const LoginReducer = (state = InitialState, { type, payload }) => {
         data: {},
         isError: true,
         errorMessage: payload,
+      };
+
+    case LOGOUT:
+      localStorage.setItem("isAuth", false);
+      return {
+        ...state,
+        isAuth: false,
       };
 
     default:

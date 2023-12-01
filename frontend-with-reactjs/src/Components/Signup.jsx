@@ -4,9 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { signupSchema } from "./schema";
 import { FiAlertCircle } from "react-icons/fi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { SignupToServer } from "../Redux/action";
 
 const initialValues = {
   name: "",
@@ -17,12 +18,17 @@ const initialValues = {
 
 const Signup = () => {
   let navigate = useNavigate();
+  let dispatch = useDispatch();
   let { values, errors, handleBlur, handleChange, handleSubmit, touched } =
     useFormik({
       initialValues: initialValues,
       validationSchema: signupSchema,
       onSubmit: (values, action) => {
-        if (!isError) toast.success("Thank you for signup!");
+        if (!isError) {
+          toast.success("Thank you for signup!");
+          dispatch(SignupToServer(values));
+        }
+
         setTimeout(() => {
           if (!isError) navigate("/login");
         }, 2000);
@@ -68,7 +74,7 @@ const Signup = () => {
         <Label htmlFor="email">Email</Label>
         <Input
           type="email"
-          placeholder="Email or Phone"
+          placeholder="Email"
           name="email"
           onChange={handleChange}
           onBlur={handleBlur}
@@ -233,6 +239,8 @@ const Input = styled.input`
 
   &:focus {
     border: 2px solid white;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+      rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
   }
 `;
 
@@ -248,4 +256,9 @@ const Button = styled.button`
   cursor: pointer;
   border: 0;
   margin-bottom: 10px;
+  transition: ease-in-out;
+
+  &:active {
+    transform: scale(1.1);
+  }
 `;
