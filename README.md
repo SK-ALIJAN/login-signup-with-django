@@ -1,7 +1,7 @@
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&random=false&width=435&lines=Hi+!+i+am+sk+alijan;this+is+login+and+signup;assignment+focused+in+only+UI)](https://git.io/typing-svg)
 
 <br>
-this is a assignment to make a login and signup functionality in using react , and backend using django , In this assignment , i focused in user interface (UI) , build in 2 days  <br><br>
+this is a assignment to make a login and signup functionality in using react , and backend using django , In this assignment , i focused in user interface (UI) by using form validation and cool interface, this was build in 2 days  <br><br>
 <p align="center"><img src="https://github.com/SK-ALIJAN/login-signup-with-django/assets/106768235/d0404484-478a-41ec-8029-187d9ab923cc"></p> <br>
 
 
